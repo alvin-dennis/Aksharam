@@ -1,2 +1,5 @@
 # Aksharam
-A Calligraphy generator for malayalam text
+
+A beautiful Malayalam calligraphy generator web application.
+
+
