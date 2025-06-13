@@ -1,10 +1,10 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Head from "next/head";
 
 export default function Home() {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const canvasRef = useRef(null);
 
   const [text, setText] = useState("മലയാളം");
   const [fontSize, setFontSize] = useState(60);
@@ -33,7 +33,8 @@ export default function Home() {
 
     // Draw multiline text
     const lines = text.split("\n");
-    const baseY = canvas.height / 2 - ((lines.length - 1) * fontSize * lineHeight) / 2;
+    const baseY =
+      canvas.height / 2 - ((lines.length - 1) * fontSize * lineHeight) / 2;
 
     lines.forEach((line, index) => {
       const y = baseY + index * fontSize * lineHeight;
@@ -48,14 +49,26 @@ export default function Home() {
     } else {
       drawText();
     }
-  }, [text, fontSize, fontColor, strokeColor, strokeWidth, lineHeight, fontFamily]);
+  }, [
+    text,
+    fontSize,
+    fontColor,
+    strokeColor,
+    strokeWidth,
+    lineHeight,
+    fontFamily,
+  ]);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-100 to-indigo-200 p-8 font-sans">
       <Head>
         <title>Malayalam Calligraphy Renderer</title>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link
+          rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossOrigin="anonymous"
+        />
         <link
           href="https://fonts.googleapis.com/css2?family=Dyuthi&family=Kalyani&family=Noto+Sans+Malayalam&display=swap"
           rel="stylesheet"
@@ -63,7 +76,9 @@ export default function Home() {
       </Head>
 
       <main className="max-w-5xl mx-auto bg-white shadow-lg rounded-2xl p-6 space-y-6">
-        <h1 className="text-3xl font-bold text-center text-indigo-600">Malayalam Calligraphy Renderer</h1>
+        <h1 className="text-3xl font-bold text-center text-indigo-600">
+          Malayalam Calligraphy Renderer
+        </h1>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Controls */}
           <div className="space-y-4">
@@ -105,12 +120,20 @@ export default function Home() {
             <div className="grid grid-cols-2 gap-4">
               <label className="block">
                 <span className="text-sm font-semibold">Font Color</span>
-                <input type="color" value={fontColor} onChange={(e) => setFontColor(e.target.value)} />
+                <input
+                  type="color"
+                  value={fontColor}
+                  onChange={(e) => setFontColor(e.target.value)}
+                />
               </label>
 
               <label className="block">
                 <span className="text-sm font-semibold">Stroke Color</span>
-                <input type="color" value={strokeColor} onChange={(e) => setStrokeColor(e.target.value)} />
+                <input
+                  type="color"
+                  value={strokeColor}
+                  onChange={(e) => setStrokeColor(e.target.value)}
+                />
               </label>
             </div>
 
@@ -142,7 +165,12 @@ export default function Home() {
 
           {/* Canvas */}
           <div className="flex items-center justify-center">
-            <canvas ref={canvasRef} width={800} height={300} className="border rounded-lg" />
+            <canvas
+              ref={canvasRef}
+              width={800}
+              height={300}
+              className="border rounded-lg"
+            />
           </div>
         </div>
       </main>
