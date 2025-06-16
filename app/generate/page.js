@@ -2,6 +2,7 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import Head from "next/head";
+import { Button } from "@/components/ui/button";
 
 export default function CalligraphyPage() {
   const canvasRef = useRef(null);
@@ -137,12 +138,13 @@ export default function CalligraphyPage() {
             placeholder="-----INPUT TEXT-----"
             className="w-full p-4 bg-[#374151] text-gray-200 rounded-xl shadow-inner font-semibold text-center resize-none focus:outline-none focus:ring-4 focus:ring-indigo-500 transition"
           />
-          <button
+          <Button
+            variant="primary"
             onClick={drawText}
             className="w-full py-3 bg-indigo-600 text-white font-extrabold rounded-xl shadow-lg hover:bg-indigo-700 active:scale-95 transition-transform"
           >
             GENERATE CALLIGRAPHY
-          </button>
+          </Button>
 
           <div className="bg-[#111827] rounded-xl shadow-lg p-4">
             <p className="text-center text-indigo-400 font-semibold mb-2">-----OUTPUT TEXT-----</p>
