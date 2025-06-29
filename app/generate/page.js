@@ -3,6 +3,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import Head from "next/head";
 import { Button } from "@/components/ui/button";
+import styles from "./generate.module.css";
 
 export default function CalligraphyPage() {
   const canvasRef = useRef(null);
@@ -12,7 +13,8 @@ export default function CalligraphyPage() {
   const [strokeColor, setStrokeColor] = useState("#1a1a1a");
   const [strokeWidth, setStrokeWidth] = useState(2);
   const [lineHeight, setLineHeight] = useState(1.5);
-  const [fontFamily, setFontFamily] = useState("Noto Sans Malayalam");
+  const [fontFamily, setFontFamily] = useState("Nupuram Calligraphy");
+  const [fontWeight, setFontWeight] = useState(400);
 
   const [isBold, setIsBold] = useState(false);
   const [isItalic, setIsItalic] = useState(false);
@@ -35,8 +37,9 @@ export default function CalligraphyPage() {
 
     let fontStyle = "";
     if (isItalic) fontStyle += "italic ";
-    if (isBold) fontStyle += "bold ";
-    fontStyle += `${fontSize}px ${fontFamily}`;
+
+    const actualWeight = isBold ? Math.min(fontWeight + 300, 900) : fontWeight;
+    fontStyle += `${actualWeight} ${fontSize}px ${fontFamily}`;
     ctx.font = fontStyle;
 
     ctx.textBaseline = "top";
@@ -112,63 +115,58 @@ export default function CalligraphyPage() {
     strokeWidth,
     lineHeight,
     fontFamily,
+    fontWeight,
     isBold,
     isItalic,
     isUnderline,
   ]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#0f2027] via-[#203a43] to-[#2c5364] p-6 font-sans text-gray-100">
+    <div className={styles.container}>
       <Head>
         <title>Malayalam Calligraphy Renderer</title>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Dyuthi&family=Kalyani&family=Noto+Sans+Malayalam&display=swap"
-          rel="stylesheet"
-        />
       </Head>
 
-      <main className="max-w-7xl mx-auto bg-[#1f2937] bg-opacity-95 rounded-2xl shadow-2xl p-8 flex flex-col md:flex-row flex-wrap gap-8">
-        <section className="flex-1 min-w-0 space-y-6">
+      <main className={styles.main}>
+        <section className={styles.section}>
           <textarea
             rows={4}
             value={text}
             onChange={(e) => setText(e.target.value)}
             placeholder="-----INPUT TEXT-----"
-            className="w-full p-4 bg-[#374151] text-gray-200 rounded-xl shadow-inner font-semibold text-center resize-none focus:outline-none focus:ring-4 focus:ring-indigo-500 transition"
+            className={styles.textarea}
           />
           <Button
             variant="primary"
             onClick={drawText}
-            className="w-full py-3 bg-indigo-600 text-white font-extrabold rounded-xl shadow-lg hover:bg-indigo-700 active:scale-95 transition-transform"
+            className={styles.generateButton}
           >
             GENERATE CALLIGRAPHY
           </Button>
 
-          <div className="bg-[#111827] rounded-xl shadow-lg p-4">
-            <p className="text-center text-indigo-400 font-semibold mb-2">-----OUTPUT TEXT-----</p>
-            <div className="w-full max-w-full overflow-auto">
+          <div className={styles.outputContainer}>
+            <p className={styles.outputTitle}>-----OUTPUT TEXT-----</p>
+            <div className={styles.canvasContainer}>
               <canvas
                 ref={canvasRef}
-                className="w-full h-auto rounded-lg border border-indigo-500"
+                className={styles.canvas}
                 width={1000}
                 height={400}
               />
             </div>
           </div>
 
-          <div className="relative text-right">
+          <div className={styles.downloadContainer}>
             <button
               onClick={() => setShowDownloadOptions(!showDownloadOptions)}
-              className="bg-indigo-600 text-white font-extrabold py-2 px-5 rounded-xl shadow-md inline-flex items-center hover:bg-indigo-700 active:scale-95 transition"
+              className={styles.downloadButton}
               aria-haspopup="true"
               aria-expanded={showDownloadOptions}
             >
               DOWNLOAD
               <svg
-                className={`ml-2 h-5 w-5 transform transition-transform duration-300 ${
-                  showDownloadOptions ? "rotate-180" : "rotate-0"
+                className={`${styles.downloadIcon} ${
+                  showDownloadOptions ? styles.rotated : ""
                 }`}
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
@@ -176,28 +174,26 @@ export default function CalligraphyPage() {
                 stroke="currentColor"
                 strokeWidth={2}
               >
-                <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M19 9l-7 7-7-7"
+                />
               </svg>
             </button>
 
             {showDownloadOptions && (
-              <div className="absolute right-0 mt-2 w-36 bg-indigo-600 rounded-xl shadow-xl z-20 text-white font-semibold">
-                <button
-                  onClick={downloadPNG}
-                  className="block w-full text-left px-5 py-2 hover:bg-indigo-700 rounded-t-xl transition"
-                >
+              <div className={styles.downloadMenu}>
+                <button onClick={downloadPNG} className={styles.downloadOption}>
                   PNG
                 </button>
                 <button
                   onClick={downloadJPEG}
-                  className="block w-full text-left px-5 py-2 hover:bg-indigo-700 transition"
+                  className={styles.downloadOption}
                 >
                   JPEG
                 </button>
-                <button
-                  onClick={downloadSVG}
-                  className="block w-full text-left px-5 py-2 hover:bg-indigo-700 rounded-b-xl transition"
-                >
+                <button onClick={downloadSVG} className={styles.downloadOption}>
                   SVG
                 </button>
               </div>
@@ -205,90 +201,121 @@ export default function CalligraphyPage() {
           </div>
         </section>
 
-        <aside className="w-full md:w-1/3 min-w-[280px] space-y-6 bg-[#111827] rounded-2xl p-6 shadow-inner">
-          <div>
-            <label className="block text-indigo-400 font-extrabold mb-2 tracking-wide">FONT TYPE</label>
+        <aside className={styles.aside}>
+          <div className={styles.controlGroup}>
+            <label className={styles.label}>FONT TYPE</label>
             <select
-              value={fontFamily}
-              onChange={(e) => setFontFamily(e.target.value)}
-              className="w-full p-3 rounded-lg bg-indigo-700 text-white font-semibold shadow-md focus:outline-none focus:ring-4 focus:ring-indigo-500 transition"
+              value={`${fontFamily}:${fontWeight}`}
+              onChange={(e) => {
+                const [family, weight] = e.target.value.split(":");
+                setFontFamily(family);
+                setFontWeight(parseInt(weight));
+              }}
+              className={styles.select}
             >
-              <option value="Noto Sans Malayalam">Noto Sans Malayalam</option>
-              <option value="Kalyani">Kalyani</option>
-              <option value="Dyuthi">Dyuthi</option>
+              <option value="Nupuram Calligraphy:100">
+                Nupuram Calligraphy - Thin
+              </option>
+              <option value="Nupuram Calligraphy:200">
+                Nupuram Calligraphy - ExtraLight
+              </option>
+              <option value="Nupuram Calligraphy:300">
+                Nupuram Calligraphy - Light
+              </option>
+              <option value="Nupuram Calligraphy:400">
+                Nupuram Calligraphy - Regular
+              </option>
+              <option value="Nupuram Calligraphy:500">
+                Nupuram Calligraphy - Medium
+              </option>
+              <option value="Nupuram Calligraphy:600">
+                Nupuram Calligraphy - SemiBold
+              </option>
+              <option value="Nupuram Calligraphy:700">
+                Nupuram Calligraphy - Bold
+              </option>
+              <option value="Nupuram Calligraphy:800">
+                Nupuram Calligraphy - ExtraBold
+              </option>
+              <option value="Nupuram Calligraphy:900">
+                Nupuram Calligraphy - Black
+              </option>
+              <option value="Nupuram Calligraphy VF:400">
+                Nupuram Calligraphy - Variable Font
+              </option>
             </select>
           </div>
 
-          <div>
-            <label className="block text-indigo-400 font-extrabold mb-2 tracking-wide">FONT COLOR</label>
+          <div className={styles.controlGroup}>
+            <label className={styles.label}>FONT COLOR</label>
             <input
               type="color"
               value={fontColor}
               onChange={(e) => setFontColor(e.target.value)}
-              className="w-full h-12 rounded-lg cursor-pointer border-2 border-indigo-500 shadow-inner"
+              className={styles.colorInput}
               aria-label="Choose font color"
             />
           </div>
 
-          <div>
-            <label className="block text-indigo-400 font-extrabold mb-2 tracking-wide">FONT SIZE</label>
+          <div className={styles.controlGroup}>
+            <label className={styles.label}>FONT SIZE</label>
             <input
               type="range"
               min="20"
               max="150"
               value={fontSize}
               onChange={(e) => setFontSize(Number(e.target.value))}
-              className="w-full accent-indigo-500 cursor-pointer"
+              className={styles.rangeInput}
               aria-label="Adjust font size"
             />
           </div>
 
-          <div>
-            <label className="block text-indigo-400 font-extrabold mb-2 tracking-wide">TEXT EFFECTS</label>
-            <div className="flex gap-4 flex-wrap mt-2 text-white font-semibold">
-              <label className="flex items-center gap-2 cursor-pointer">
+          <div className={styles.controlGroup}>
+            <label className={styles.label}>TEXT EFFECTS</label>
+            <div className={styles.checkboxGroup}>
+              <label className={styles.checkboxLabel}>
                 <input
                   type="checkbox"
                   checked={isBold}
                   onChange={() => setIsBold(!isBold)}
-                  className="w-5 h-5 rounded border-indigo-500 accent-indigo-600 cursor-pointer"
+                  className={styles.checkbox}
                 />
                 Bold
               </label>
-              <label className="flex items-center gap-2 cursor-pointer">
+              <label className={styles.checkboxLabel}>
                 <input
                   type="checkbox"
                   checked={isItalic}
                   onChange={() => setIsItalic(!isItalic)}
-                  className="w-5 h-5 rounded border-indigo-500 accent-indigo-600 cursor-pointer"
+                  className={styles.checkbox}
                 />
                 Italic
               </label>
-              <label className="flex items-center gap-2 cursor-pointer">
+              <label className={styles.checkboxLabel}>
                 <input
                   type="checkbox"
                   checked={isUnderline}
                   onChange={() => setIsUnderline(!isUnderline)}
-                  className="w-5 h-5 rounded border-indigo-500 accent-indigo-600 cursor-pointer"
+                  className={styles.checkbox}
                 />
                 Underline
               </label>
             </div>
           </div>
 
-          <div>
-            <label className="block text-indigo-400 font-extrabold mb-2 tracking-wide">STROKE OUTLINE</label>
+          <div className={styles.controlGroup}>
+            <label className={styles.label}>STROKE OUTLINE</label>
             <input
               type="color"
               value={strokeColor}
               onChange={(e) => setStrokeColor(e.target.value)}
-              className="w-full h-12 rounded-lg cursor-pointer border-2 border-indigo-500 shadow-inner"
+              className={styles.colorInput}
               aria-label="Choose stroke outline color"
             />
           </div>
 
-          <div>
-            <label className="block text-indigo-400 font-extrabold mb-2 tracking-wide">LINE SPACING</label>
+          <div className={styles.controlGroup}>
+            <label className={styles.label}>LINE SPACING</label>
             <input
               type="range"
               min="1"
@@ -296,7 +323,7 @@ export default function CalligraphyPage() {
               step="0.1"
               value={lineHeight}
               onChange={(e) => setLineHeight(Number(e.target.value))}
-              className="w-full accent-indigo-500 cursor-pointer"
+              className={styles.rangeInput}
               aria-label="Adjust line spacing"
             />
           </div>
