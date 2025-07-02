@@ -1,0 +1,29 @@
+/* app/landingPage/landing.css */
+
+/* Import the custom font */
+@import url('https://fonts.googleapis.com/css2?family=Instrument+Serif&display=swap');
+
+
+.font-instrument {
+  font-family: var(--font-instrument);
+}
+.typing::after {
+  content: "|";
+  animation: blink 1s infinite;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+/* Optional to hide scrollbars for a cleaner look */
+::-webkit-scrollbar {
+  display: none;
+}
