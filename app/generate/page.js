@@ -5,7 +5,7 @@ import Head from "next/head";
 import { Button } from "@/components/ui/button";
 import styles from "./generate.module.css";
 
-export default function CalligraphyPage() {
+export default function Generate() {
   const canvasRef = useRef(null);
   const [text, setText] = useState("");
   const [fontSize, setFontSize] = useState(60);
@@ -22,7 +22,7 @@ export default function CalligraphyPage() {
 
   const [showDownloadOptions, setShowDownloadOptions] = useState(false);
 
-  const drawText = () => {
+  const drawText = React.useCallback(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
@@ -45,7 +45,11 @@ export default function CalligraphyPage() {
     ctx.textBaseline = "top";
 
     const lines = text.split("\n");
-    const lineHeightPx = fontSize * lineHeight;
+    // Use actual text metrics for line height
+    let metrics = ctx.measureText("M");
+    let actualLineHeight =
+      metrics.actualBoundingBoxAscent + metrics.actualBoundingBoxDescent;
+    const lineHeightPx = actualLineHeight * lineHeight;
 
     lines.forEach((line, index) => {
       const y = index * lineHeightPx;
@@ -54,14 +58,26 @@ export default function CalligraphyPage() {
 
       if (isUnderline) {
         const textWidth = ctx.measureText(line).width;
-        const underlineY = y + fontSize + 2;
+        const underlineY = y + actualLineHeight + 2;
         ctx.beginPath();
         ctx.moveTo(0, underlineY);
         ctx.lineTo(textWidth, underlineY);
         ctx.stroke();
       }
     });
-  };
+  }, [
+    text,
+    fontSize,
+    fontColor,
+    strokeColor,
+    strokeWidth,
+    lineHeight,
+    fontFamily,
+    fontWeight,
+    isBold,
+    isItalic,
+    isUnderline,
+  ]);
 
   const downloadPNG = () => {
     const canvas = canvasRef.current;
@@ -119,14 +135,11 @@ export default function CalligraphyPage() {
     isBold,
     isItalic,
     isUnderline,
+    drawText,
   ]);
 
   return (
     <div className={styles.container}>
-      <Head>
-        <title>Malayalam Calligraphy Renderer</title>
-      </Head>
-
       <main className={styles.main}>
         <section className={styles.section}>
           <textarea
@@ -202,49 +215,6 @@ export default function CalligraphyPage() {
         </section>
 
         <aside className={styles.aside}>
-          <div className={styles.controlGroup}>
-            <label className={styles.label}>FONT TYPE</label>
-            <select
-              value={`${fontFamily}:${fontWeight}`}
-              onChange={(e) => {
-                const [family, weight] = e.target.value.split(":");
-                setFontFamily(family);
-                setFontWeight(parseInt(weight));
-              }}
-              className={styles.select}
-            >
-              <option value="Nupuram Calligraphy:100">
-                Nupuram Calligraphy - Thin
-              </option>
-              <option value="Nupuram Calligraphy:200">
-                Nupuram Calligraphy - ExtraLight
-              </option>
-              <option value="Nupuram Calligraphy:300">
-                Nupuram Calligraphy - Light
-              </option>
-              <option value="Nupuram Calligraphy:400">
-                Nupuram Calligraphy - Regular
-              </option>
-              <option value="Nupuram Calligraphy:500">
-                Nupuram Calligraphy - Medium
-              </option>
-              <option value="Nupuram Calligraphy:600">
-                Nupuram Calligraphy - SemiBold
-              </option>
-              <option value="Nupuram Calligraphy:700">
-                Nupuram Calligraphy - Bold
-              </option>
-              <option value="Nupuram Calligraphy:800">
-                Nupuram Calligraphy - ExtraBold
-              </option>
-              <option value="Nupuram Calligraphy:900">
-                Nupuram Calligraphy - Black
-              </option>
-              <option value="Nupuram Calligraphy VF:400">
-                Nupuram Calligraphy - Variable Font
-              </option>
-            </select>
-          </div>
 
           <div className={styles.controlGroup}>
             <label className={styles.label}>FONT COLOR</label>
@@ -314,19 +284,6 @@ export default function CalligraphyPage() {
             />
           </div>
 
-          <div className={styles.controlGroup}>
-            <label className={styles.label}>LINE SPACING</label>
-            <input
-              type="range"
-              min="1"
-              max="3"
-              step="0.1"
-              value={lineHeight}
-              onChange={(e) => setLineHeight(Number(e.target.value))}
-              className={styles.rangeInput}
-              aria-label="Adjust line spacing"
-            />
-          </div>
         </aside>
       </main>
     </div>

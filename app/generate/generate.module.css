@@ -1,9 +1,16 @@
+/* Match landing page background */
 .container {
   min-height: 100vh;
-  background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%);
+  background: url('/bg.jpeg') center center/cover no-repeat fixed, #0f2027;
   padding: 1rem;
   font-family: sans-serif;
   color: #f3f4f6;
+}
+
+@media (max-width: 640px) {
+  .container {
+    background-attachment: scroll;
+  }
 }
 
 @media (min-width: 640px) {
